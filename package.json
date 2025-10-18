@@ -1,0 +1,161 @@
+{
+  "name": "personal-budget-tracker",
+  "version": "1.0.0",
+  "description": "A comprehensive personal budget tracking application with transaction management, reporting, and budget planning features",
+  "main": "scripts/connect.js",
+  "scripts": {
+    "start": "node scripts/server.js",
+    "dev": "nodemon scripts/server.js",
+    "setup": "node scripts/setup.js",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
+    "db:init": "node -e \"require('./scripts/connect').initializeApp()\"",
+    "db:reset": "node scripts/reset-db.js",
+    "db:seed": "node scripts/seed-data.js",
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "postcss frontend/style.css -o dist/style.min.css --config postcss.config.js",
+    "build:js": "uglify-js frontend/script.js -o dist/script.min.js",
+    "lint": "eslint scripts/ frontend/ --ext .js",
+    "lint:fix": "eslint scripts/ frontend/ --ext .js --fix",
+    "format": "prettier --write scripts/ frontend/ database/",
+    "docs": "jsdoc scripts/ -d docs/",
+    "backup": "node scripts/backup-db.js",
+    "restore": "node scripts/restore-db.js"
+  },
+  "keywords": [
+    "budget",
+    "finance",
+    "personal-finance",
+    "expense-tracking",
+    "money-management",
+    "sqlite",
+    "nodejs",
+    "javascript",
+    "web-app"
+  ],
+  "author": {
+    "name": "Budget Tracker Team",
+    "email": "contact@budgettracker.app",
+    "url": "https://budgettracker.app"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/personal-budget-tracker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/personal-budget-tracker/issues"
+  },
+  "homepage": "https://github.com/yourusername/personal-budget-tracker#readme",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.6",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "morgan": "^1.10.0",
+    "express-rate-limit": "^6.7.0",
+    "compression": "^1.7.4",
+    "dotenv": "^16.3.1",
+    "joi": "^17.9.2",
+    "bcrypt": "^5.1.0",
+    "jsonwebtoken": "^9.0.1",
+    "multer": "^1.4.5-lts.1",
+    "csv-parser": "^3.0.0",
+    "json2csv": "^5.x",
+    "moment": "^2.29.4",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "jest": "^29.6.1",
+    "supertest": "^6.3.3",
+    "eslint": "^8.45.0",
+    "prettier": "^3.0.0",
+    "jsdoc": "^4.0.2",
+    "uglify-js": "^3.17.4",
+    "postcss": "^8.4.27",
+    "postcss-cli": "^10.1.0",
+    "autoprefixer": "^10.4.14",
+    "cssnano": "^6.0.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "es2021": true,
+      "jest": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-console": "warn",
+      "no-unused-vars": "error",
+      "no-undef": "error",
+      "semi": [
+        "error",
+        "always"
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ]
+    }
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "printWidth": 80,
+    "tabWidth": 2,
+    "useTabs": false
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {},
+      "cssnano": {
+        "preset": "default"
+      }
+    }
+  },
+  "nodemonConfig": {
+    "watch": [
+      "scripts/",
+      "database/"
+    ],
+    "ext": "js,sql",
+    "ignore": [
+      "tests/",
+      "node_modules/",
+      "frontend/"
+    ]
+  },
+  "files": [
+    "scripts/",
+    "database/",
+    "frontend/",
+    "README.md",
+    "LICENSE"
+  ]
+}

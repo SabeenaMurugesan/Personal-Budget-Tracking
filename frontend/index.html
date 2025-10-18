@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Budget Tracker - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-wallet"></i>
+                    <h1>Budget Tracker</h1>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link active">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="transactions.html" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i> Transactions
+                    </a>
+                    <a href="reports.html" class="nav-link">
+                        <i class="fas fa-chart-bar"></i> Reports
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Summary Cards -->
+            <section class="summary-section">
+                <div class="summary-cards">
+                    <div class="summary-card income">
+                        <div class="card-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Income</h3>
+                            <p class="amount" id="totalIncome">$0.00</p>
+                            <span class="period">This Month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card expense">
+                        <div class="card-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Expenses</h3>
+                            <p class="amount" id="totalExpenses">$0.00</p>
+                            <span class="period">This Month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card balance">
+                        <div class="card-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Net Income</h3>
+                            <p class="amount" id="netIncome">$0.00</p>
+                            <span class="period">This Month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card savings">
+                        <div class="card-icon">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Net Worth</h3>
+                            <p class="amount" id="netWorth">$0.00</p>
+                            <span class="period">All Accounts</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="action-buttons">
+                    <button class="action-btn income-btn" onclick="showTransactionModal('income')">
+                        <i class="fas fa-plus-circle"></i>
+                        Add Income
+                    </button>
+                    <button class="action-btn expense-btn" onclick="showTransactionModal('expense')">
+                        <i class="fas fa-minus-circle"></i>
+                        Add Expense
+                    </button>
+                    <button class="action-btn" onclick="showBudgetModal()">
+                        <i class="fas fa-chart-pie"></i>
+                        Set Budget
+                    </button>
+                    <button class="action-btn" onclick="window.location.href='transactions.html'">
+                        <i class="fas fa-list"></i>
+                        View All
+                    </button>
+                </div>
+            </section>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-grid">
+                <!-- Recent Transactions -->
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Recent Transactions</h2>
+                        <a href="transactions.html" class="view-all-link">View All</a>
+                    </div>
+                    <div class="card-content">
+                        <div id="recentTransactions" class="transactions-list">
+                            <!-- Transactions will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Spending by Category -->
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Spending by Category</h2>
+                        <select id="monthSelect" onchange="loadSpendingChart()">
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="spendingChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Account Balances -->
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Account Balances</h2>
+                    </div>
+                    <div class="card-content">
+                        <div id="accountBalances" class="accounts-list">
+                            <!-- Account balances will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Budget Progress -->
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Budget Progress</h2>
+                    </div>
+                    <div class="card-content">
+                        <div id="budgetProgress" class="budget-list">
+                            <!-- Budget progress will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Transaction</h2>
+                <span class="close" onclick="closeModal('transactionModal')">&times;</span>
+            </div>
+            <form id="transactionForm" class="modal-form">
+                <div class="form-group">
+                    <label for="transactionAmount">Amount ($)</label>
+                    <input type="number" id="transactionAmount" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionDescription">Description</label>
+                    <input type="text" id="transactionDescription" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionCategory">Category</label>
+                    <select id="transactionCategory" required>
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionAccount">Account</label>
+                    <select id="transactionAccount" required>
+                        <option value="">Select Account</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionDate">Date</label>
+                    <input type="date" id="transactionDate" required>
+                </div>
+                
+                <input type="hidden" id="transactionType">
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('transactionModal')">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Add Transaction
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Budget Modal -->
+    <div id="budgetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Set Budget Limit</h2>
+                <span class="close" onclick="closeModal('budgetModal')">&times;</span>
+            </div>
+            <form id="budgetForm" class="modal-form">
+                <div class="form-group">
+                    <label for="budgetCategory">Category</label>
+                    <select id="budgetCategory" required>
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="budgetMonth">Month</label>
+                    <input type="month" id="budgetMonth" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="budgetAmount">Budget Limit ($)</label>
+                    <input type="number" id="budgetAmount" step="0.01" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('budgetModal')">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Set Budget
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+        });
+    </script>
+</body>
+</html>

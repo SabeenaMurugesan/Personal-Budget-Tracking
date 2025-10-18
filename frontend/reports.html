@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Budget Tracker - Reports</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-wallet"></i>
+                    <h1>Budget Tracker</h1>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="transactions.html" class="nav-link">
+                        <i class="fas fa-exchange-alt"></i> Transactions
+                    </a>
+                    <a href="reports.html" class="nav-link active">
+                        <i class="fas fa-chart-bar"></i> Reports
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Financial Reports</h1>
+                <div class="header-actions">
+                    <div class="date-range-selector">
+                        <select id="reportPeriod" onchange="updateReportPeriod()">
+                            <option value="current-month">Current Month</option>
+                            <option value="last-month">Last Month</option>
+                            <option value="last-3-months">Last 3 Months</option>
+                            <option value="last-6-months">Last 6 Months</option>
+                            <option value="current-year">Current Year</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <div id="customDateRange" class="custom-date-range" style="display: none;">
+                            <input type="date" id="startDate">
+                            <span>to</span>
+                            <input type="date" id="endDate">
+                            <button class="btn btn-secondary" onclick="applyCustomRange()">Apply</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="exportReports()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Report Summary -->
+            <section class="report-summary">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="card-icon income">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Income</h3>
+                            <p class="amount" id="reportTotalIncome">$0.00</p>
+                            <span class="change" id="incomeChange">--</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="card-icon expense">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Expenses</h3>
+                            <p class="amount" id="reportTotalExpenses">$0.00</p>
+                            <span class="change" id="expenseChange">--</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Net Income</h3>
+                            <p class="amount" id="reportNetIncome">$0.00</p>
+                            <span class="change" id="netChange">--</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="card-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Savings Rate</h3>
+                            <p class="amount" id="savingsRate">0%</p>
+                            <span class="change" id="savingsChange">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <div class="reports-grid">
+                <!-- Income vs Expenses Trend -->
+                <section class="report-card">
+                    <div class="card-header">
+                        <h2>Income vs Expenses Trend</h2>
+                        <div class="chart-controls">
+                            <button class="chart-type-btn active" onclick="changeChartType('line', this)">Line</button>
+                            <button class="chart-type-btn" onclick="changeChartType('bar', this)">Bar</button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Expense Breakdown -->
+                <section class="report-card">
+                    <div class="card-header">
+                        <h2>Expense Breakdown</h2>
+                        <select id="expenseBreakdownPeriod" onchange="updateExpenseBreakdown()">
+                            <option value="current-month">Current Month</option>
+                            <option value="last-month">Last Month</option>
+                            <option value="last-3-months">Last 3 Months</option>
+                        </select>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Budget Performance -->
+                <section class="report-card">
+                    <div class="card-header">
+                        <h2>Budget Performance</h2>
+                        <select id="budgetMonth" onchange="updateBudgetChart()">
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+                    <div class="card-content">
+                        <div id="budgetPerformance" class="budget-performance">
+                            <!-- Budget performance will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Top Categories -->
+                <section class="report-card">
+                    <div class="card-header">
+                        <h2>Top Spending Categories</h2>
+                        <select id="topCategoriesLimit" onchange="updateTopCategories()">
+                            <option value="5">Top 5</option>
+                            <option value="10" selected>Top 10</option>
+                            <option value="15">Top 15</option>
+                        </select>
+                    </div>
+                    <div class="card-content">
+                        <div id="topCategories" class="top-categories">
+                            <!-- Top categories will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Account Performance -->
+                <section class="report-card">
+                    <div class="card-header">
+                        <h2>Account Performance</h2>
+                    </div>
+                    <div class="card-content">
+                        <div id="accountPerformance" class="account-performance">
+                            <!-- Account performance will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Monthly Comparison -->
+                <section class="report-card">
+                    <div class="card-header">
+                        <h2>Monthly Comparison</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="monthlyComparisonChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Detailed Reports Tables -->
+            <section class="detailed-reports">
+                <div class="tabs">
+                    <button class="tab-button active" onclick="showTab('income-report')">Income Report</button>
+                    <button class="tab-button" onclick="showTab('expense-report')">Expense Report</button>
+                    <button class="tab-button" onclick="showTab('budget-report')">Budget Report</button>
+                    <button class="tab-button" onclick="showTab('trends-report')">Trends Report</button>
+                </div>
+
+                <!-- Income Report Tab -->
+                <div id="income-report" class="tab-content active">
+                    <div class="table-container">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Transactions</th>
+                                    <th>Average</th>
+                                    <th>% of Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="incomeReportTable">
+                                <!-- Income report data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Expense Report Tab -->
+                <div id="expense-report" class="tab-content">
+                    <div class
