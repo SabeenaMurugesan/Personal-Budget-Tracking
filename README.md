@@ -1,3 +1,4 @@
+
 # Personal Budget Tracker
 
 A comprehensive personal finance management application built with Node.js, SQLite, and vanilla JavaScript. Track your income, expenses, set budgets, and generate detailed financial reports to take control of your personal finances.
@@ -301,3 +302,6 @@ We welcome feature requests! Please create an issue with:
 ---
 
 Made with ❤️ for better personal finance
+
+# Personal-Budget-Tracking
+
